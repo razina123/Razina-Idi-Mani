@@ -55,7 +55,7 @@ ARIMA & ML appliqués à des données temporelles pour anticiper tendances et be
 
 Chatbot WhatsApp (n8n) — Eazy Visa
 Agent conversationnel intelligent : qualification prospects, prise de RDV, relances J+1, mémoire persistante.
- [Télécharger le workflow n8n (chatbot.json)](./chatbot.json)
+[Télécharger le workflow n8n (Chatbot.json)](https://raw.githubusercontent.com/razina123/Razina-Idi-Mani/main/Chatbot.json)
 
 Automatisation des articles de blog
 Génération et publication automatisée de contenus à partir de sources externes (IA + n8n).
