@@ -1,4 +1,4 @@
-Bonjour, je suis Razina Idi Mani, passionnée par la Data Science, le Machine Learning et l’automatisation intelligente.
+&Bonjour, je suis Razina Idi Mani, passionnée par la Data Science, le Machine Learning et l’automatisation intelligente.
 Je crois que les données et l’IA peuvent transformer la manière dont les institutions et les entreprises prennent leurs décisions et interagissent avec leurs usagers.
 
 📧 razinaidimani3@gmail.com
