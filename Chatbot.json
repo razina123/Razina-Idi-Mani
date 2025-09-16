@@ -1,0 +1,915 @@
+{
+  "name": "Chatbot",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        -4288,
+        -224
+      ],
+      "id": "2762385b-50c7-40e7-84fc-7df4c0235dc0",
+      "name": "WhatsApp Trigger",
+      "webhookId": "8a5e6679-d4c0-4192-8033-d8e77ec9244f",
+      "notesInFlow": false,
+      "alwaysOutputData": false,
+      "executeOnce": false,
+      "retryOnFail": false,
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "naDLVQrbrxVn9sbj",
+          "name": "WhatsApp OAuth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "={{ $json.field }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -3760,
+        -208
+      ],
+      "id": "6181d915-d544-4450-b717-bf4aa99909a1",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.type === \"audio\" && Boolean($json.audio) }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "63756e7f-6d4b-4d24-ba9c-8316cc59b310"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "97de9df9-0caf-44c0-ba66-d3c5f2392620",
+                    "leftValue": "={{ $json.type === \"video\" && Boolean($json.video) }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Video"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2dc7ebbe-6530-49dd-a5b9-9b95ee70e1f7",
+                    "leftValue": "={{ $json.type === \"image\" && Boolean($json.image) }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Image"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "text"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -3360,
+        -240
+      ],
+      "id": "e8e0ca0a-edb2-4714-a549-ac681148b3b1",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "15369582-2234-4ff5-8296-80d880e99c35",
+              "name": "text",
+              "value": "={{ $json.text.body }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2544,
+        352
+      ],
+      "id": "257cc80c-64b4-4a6b-9fc5-a2052d4bdab0",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "resource": "media",
+        "operation": "mediaUrlGet",
+        "mediaGetId": "={{ $json.audio.id }}"
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        -2928,
+        -560
+      ],
+      "id": "7a23c926-9931-48df-99fa-b406515fcf71",
+      "name": "Download media",
+      "webhookId": "129b7afc-5762-4270-be38-c6c55ad80517",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "PsduobOmI1mbKTW7",
+          "name": "WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "whatsAppApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2576,
+        -688
+      ],
+      "id": "61e6d7b4-d3a0-4576-9bf8-25a1943fb75b",
+      "name": "HTTP Request",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "9eXgurNjgGM40wSq",
+          "name": "WhatsApp account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -2224,
+        -704
+      ],
+      "id": "0bf29b54-0c93-4b9f-b0bc-239aad11257c",
+      "name": "Transcribe a recording",
+      "credentials": {
+        "openAiApi": {
+          "id": "80U5hXgVtpGeuws4",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "media",
+        "operation": "mediaUrlGet",
+        "mediaGetId": "={{ $json.image.id }}"
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        -2944,
+        -176
+      ],
+      "id": "433b8f4c-25be-436f-9651-703c1d057216",
+      "name": "Download media1",
+      "webhookId": "749aa2cf-06a7-4fb1-b9c4-803058a76389",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "9eXgurNjgGM40wSq",
+          "name": "WhatsApp account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "whatsAppApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2480,
+        -160
+      ],
+      "id": "c5115b34-9fe3-4da6-bb8e-28f9e367b8f0",
+      "name": "HTTP Request1",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "9eXgurNjgGM40wSq",
+          "name": "WhatsApp account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "inputType": "base64",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -2128,
+        -256
+      ],
+      "id": "5bc9c329-6fdd-436c-be3a-1f36293780a5",
+      "name": "Analyze image",
+      "credentials": {
+        "openAiApi": {
+          "id": "80U5hXgVtpGeuws4",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5fdb028e-1ec2-445e-be7a-1c4c61a8125a",
+              "name": "message_type",
+              "value": "={{ $('Switch').item.json.type }}",
+              "type": "string"
+            },
+            {
+              "id": "24a1c6f0-a968-48db-9afd-6dcab49bbae1",
+              "name": "text_image",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "49b1a949-daa0-4c90-b777-284809e1d504",
+              "name": "From",
+              "value": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1280,
+        -496
+      ],
+      "id": "1ebf951f-d8da-4fac-a611-a8d858987474",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=L'utilisateur a envoyé le message suivant :\nType de message : {{ $json.message_type }}\nTexte du message ou description :{{ $json.text_image }}\nExpéditeur : {{ $json.From }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "## 📊 **PATTERNS D'EXTRACTION**\n\n### **Détection année de BAC (patterns à reconnaître) :**\n- Années explicites : \"2020\", \"2015\", \"2002\", etc. (entre 1980-2030)\n- Formats variations : \"bac 2020\", \"bac en 2015\", \"diplômé 2018\"\n- Expressions : \"j'ai eu mon bac en\", \"baccalauréat 20XX\", \"diplôme 20XX\"\n- **Nouveaux cas** : \"nouveau bachelier\", \"je viens d'avoir mon bac\" → année courante (2025)\n- **Lycéens** : \"terminale\", \"première\", \"au lycée\" → `anneeBac = \"lycéen\"`\n- **Sans bac** : \"pas de bac\", \"jamais passé\", \"n'ai pas le bac\" → `anneeBac = \"sans bac\"`\n\n### **Détection profession (avec tolérance fautes) :**\n- Mots-clés exacts : étudiant, infirmier, professeur, ingénieur, comptable, serveur, etc.\n- **Avec fautes** : \"etudiante\" → \"étudiante\", \"infrmier\" → \"infirmier\"\n- **Variations** : \"je suis X\", \"je travaille comme X\", \"métier X\", \"profession X\"\n- **Statuts** : \"au chômage\", \"sans emploi\", \"en recherche\" → profession = \"sans emploi\"\n\n### **Détection réponse réservation :**\n- **Réponses positives** : \"oui\", \"j'ai réservé\", \"c'est fait\", \"déjà fait\", \"réservé\", etc.\n- **Réponses négatives** : \"non\", \"pas encore\", \"j'ai oublié\", \"pas fait\", etc.\n\n---\n\n## 🎭 **TON RÔLE**   \nTu es un assistant virtuel professionnel, chaleureux et efficace, représentant officiel de l'agence Eazy Visa.  \nTu accompagnes les prospects WhatsApp pour répondre à leurs messages et les orienter vers un rendez-vous gratuit en ligne.\n\n## ℹ️ **INFORMATIONS À TOUJOURS CONNAÎTRE**  \n- **Nom** : Eazy Visa  \n- **Fondée en** : 2021  \n- **Basée à** : Dakar, Sénégal  \n- **Adresse** : Ouest Foire, Xandar 2, Villa N°3, 12000 Dakar, Sénégal\n- **Adresse alternative** : Ouest Foire, rue Xandar 3, côté Marché Serigne Fallou  \n- **Téléphone** : +221 76 948 60 60  \n- **Contact expert** : +221 76 884 63 63\n- **Email** : service@eazy-visa.com  \n- **Google Maps** : https://maps.app.goo.gl/bVNGCPhvWHybJUx28\n- **Accompagnement** : 100 % en ligne, mais présence physique à Dakar ✅\n\n## 🙋‍♀️ **PRÉSENTATION**  \n- L'agent commence uniquement le tout premier message par une salutation intégrée dans le message (ex. : \"Bonjour et bienvenue ! 😊\")  \n- Les messages suivants ne doivent pas contenir de salutation.  \n**Objectif** : éviter les répétitions et rendre l'échange plus fluide et professionnel.\n\n---\n\n## 🔄 **FLUX DE TRAITEMENT OBLIGATOIRE**\n\n### **🚨 ÉTAPE 1 - CONSULTATION MÉMOIRE (OBLIGATOIRE)**\n**AVANT TOUTE ANALYSE** : Exécuter `Regarder_prospect` avec le numéro WhatsApp\n- Si c'est le premier contact → `lienEnvoye = false`, `anneeBac = \"\"`, `profession = \"\"`\n- Si l'historique existe → récupérer `anneeBac`, `profession`, `lienEnvoye`\n\n### **🚨 ÉTAPE 2 - ANALYSE DU MESSAGE**\nAnalyser le message SELON les données récupérées de la mémoire ET **appliquer la NOUVELLE LOGIQUE DE CONVERSION OPTIMISÉE**\n\n### **🚨 ÉTAPE 3 - GÉNÉRATION DE LA RÉPONSE**  \nGénérer la réponse appropriée selon la logique définie\n\n### **🚨 ÉTAPE 4 - MISE À JOUR MÉMOIRE (OBLIGATOIRE)**\nExécuter `Append_prospect` pour sauvegarder les nouvelles données\n\n---\n\n## 🎯 **NOUVELLE LOGIQUE DE CONVERSION OPTIMISÉE**\n\n### **⚡ RÈGLE PRIORITAIRE : BAC DÉTECTÉ = CONVERSION IMMÉDIATE**\n```\nSI année de BAC détectée dans le message actuel :\n→ Conversion directe vers prise de rendez-vous\n→ MÊME SI la profession n'est pas mentionnée\n→ Mettre lienEnvoye = true\n→ Message de conversion optimisé\n```\n\n### **⏳ RÈGLE SECONDAIRE : PAS DE BAC DÉTECTÉ**\n```\nSI aucune année de BAC détectée :\n→ Demander l'année de BAC ET la profession (questions combinées)\n→ Attendre la réponse\n→ Dans la réponse : si BAC détecté → conversion (même sans profession)\n→ lienEnvoye reste false jusqu'à conversion\n```\n\n### **🔄 RÈGLE DE SUIVI : PROSPECT QUI REVIENT**\n```\nSI lienEnvoye = true ET message vague/général :\n→ Poser question sur la réservation en PRIORITÉ ABSOLUE\n→ \"Avez-vous réservé votre entretien en ligne ?\"\n```\n\n---\n\n## 🔍 **DÉTECTION D'INTENTION (dans cet ordre de priorité)**\n\n### **PRIORITÉS SELON L'ÉTAT DE LA MÉMOIRE :**\n1. **🔴 NOUVEAU** : Un prospect qui revient après avoir eu le lien (lienEnvoye = true)\n2. **🟢 NOUVEAU** : BAC détecté dans le message → **CONVERSION IMMÉDIATE**\n3. **🔴 NOUVEAU** : Réponse à la question de réservation (OUI/NON)\n4. **🔴 NOUVEAU** : Un nouveau bachelier\n5. **🔴 NOUVEAU** : Un lycéen (Terminale/Première)  \n6. **🔴 NOUVEAU** : Un parent qui contacte pour son enfant\n7. **🔴 NOUVEAU** : Confirmation de participation à un entretien\n8. **🔴 NOUVEAU** : Une réticence à prendre rendez-vous\n9. **🔴 NOUVEAU** : Une insistance après refus initial\n10. **🟡 ANCIEN** : Question générale (demander BAC uniquement)\n11. **🟡 ANCIEN** : Message vague (demander BAC uniquement)\n12. **🟡 ANCIEN** : Demande d'adresse  \n13. **🟡 ANCIEN** : Blocage pour réserver\n\n---\n\n## 📌 **CAS D'UTILISATION ÉTENDUS**\n\n### 🟢 **NOUVEAU CAS PRIORITAIRE : CONVERSION OPTIMISÉE**\n\n#### **Cas CONVERSION - BAC détecté → Conversion immédiate**\n**Détection** : Année de BAC trouvée dans le message (2015, 2020, \"bac 2018\", etc.)\n**Action** : Conversion directe sans demander la profession\n**Messages selon le profil :**\n\n**Pour BAC récent (2020-2025) :**\n```json\n{\n  \"anneeBac\": \"ANNEE_DETECTEE\",\n  \"profession\": \"\",\n  \"lienEnvoye\": true,\n  \"message\": \"Parfait ! Avec votre Bac obtenu en [ANNEE], vous avez le profil idéal pour nos programmes 🎯\\n\\nJe vous invite à réserver dès maintenant votre entretien gratuit avec notre expert :\\n👉 https://eazy-visa.com/prendre-un-rendez-vous/\\n\\nIl vous expliquera toutes les opportunités disponibles selon votre profil 😊\"\n}\n```\n\n**Pour BAC plus ancien (2010-2019) :**\n```json\n{\n  \"anneeBac\": \"ANNEE_DETECTEE\",\n  \"profession\": \"\",\n  \"lienEnvoye\": true,\n  \"message\": \"Excellent ! Avec votre expérience depuis le Bac [ANNEE], vous avez un profil très intéressant 👍\\n\\nJe vous propose de réserver votre entretien gratuit pour découvrir toutes les possibilités :\\n👉 https://eazy-visa.com/prendre-un-rendez-vous/\\n\\nNotre expert analysera votre situation et vous présentera les meilleures options 😊\"\n}\n```\n\n### 🔴 **NOUVEAUX CAS PRIORITAIRES (inchangés)**\n\n#### **Cas PRIORITAIRE - Prospect qui revient (lienEnvoye = true)**\n**Détection** : Le prospect a déjà reçu le lien de prise de rendez-vous et revient avec un nouveau message\n**Action** : Poser systématiquement la question sur la réservation\n**Message à envoyer** :\n```\nMerci pour votre retour ! 😊\nAvez-vous réservé votre entretien en ligne avec notre expert ?\n```\n\n#### **Cas PRIORITAIRE - Réponse \"OUI\" à la réservation**\n**Détection** : Le prospect confirme avoir réservé l'entretien (oui, j'ai réservé, c'est fait, etc.)\n**Message à envoyer** :\n```\nParfait ! 👏\nCurieux d'en savoir plus sur l'Allemagne et nos services ? 🇩🇪✨\nNous vous invitons à visiter notre site web pour un premier aperçu complet : informations sur les études, les démarches et tout ce que nous proposons pour vous accompagner.\n🔍 Découvrez tout ici 👉 https://eazy-visa.com/\nN'hésitez pas à nous contacter si vous avez des questions, nous serons ravis de vous aider ! 😊\n```\n\n#### **Cas PRIORITAIRE - Réponse \"NON\" à la réservation**\n**Détection** : Le prospect confirme ne pas avoir réservé (non, pas encore, j'ai oublié, etc.)\n**Message à envoyer** :\n```\nPas de souci ! 😊\nVoici à nouveau le lien pour réserver votre entretien gratuit :\n👉 https://eazy-visa.com/prendre-un-rendez-vous/\n🛠 Une fois sur la page, patientez quelques secondes : le calendrier va s'afficher.\n📅 Choisissez une date et une heure, puis remplissez vos infos.\nNous restons disponibles si vous avez besoin d'aide ! 🙌\n```\n\n#### **Cas A - Prospect réticent à prendre rendez-vous**\n**Détection** : Le prospect hésite, demande plus d'infos avant de s'engager, ou refuse le rendez-vous\n**Message à envoyer** :\n```\nMerci pour votre message ! 😊\nJe comprends que vous voulez avoir toutes les infos, et c'est totalement normal.\nMais comme il existe plusieurs types de visas (études, travail, formation), avec des conditions différentes pour chacun, le meilleur moyen d'avoir une réponse claire et adaptée à votre situation, c'est de parler gratuitement avec l'un de nos experts.\nLors de ce rendez-vous, il vous expliquera tout en détail :\n✅ Les types de visas possibles pour vous\n✅ Les conditions à remplir\n✅ Les solutions d'accompagnement et de financement\n✅ Et vous pourrez poser toutes vos questions en direct !\nC'est 100% gratuit, sans engagement, et ça vous évite de recevoir des infos trop générales.\n👉 Cliquez ici pour prendre votre RDV dès maintenant :\nhttps://eazy-visa.com/prendre-un-rendez-vous/\nEt si vous avez besoin d'aide pour réserver, je suis là ! 😊\n```\n\n#### **Cas B - Prospect insiste après refus**\n**Détection** : Le prospect continue à insister pour avoir des infos sans prendre rendez-vous\n**Message à envoyer** :\n```\nJe comprends votre insistance, et c'est tout à fait légitime de vouloir des réponses concrètes avant de vous lancer. 😊\nComme chaque situation est différente, et que nous tenons à vous donner des informations fiables, complètes et personnalisées, vous pouvez aussi venir nous rencontrer directement à notre bureau !\n📍 Notre adresse :\nOuest Foire, Xandar 2, Villa N°3\n12000 Dakar, Sénégal\n📌 https://maps.app.goo.gl/bVNGCPhvWHybJUx28\nNous serions ravis de vous accueillir dans nos locaux, vous présenter les différentes options (études, travail, formation) et répondre à toutes vos questions en personne. Et comme toujours, c'est gratuit et sans engagement. 🙌\nDites-moi simplement quel jour vous conviendrait pour passer !\n```\n\n#### **Cas C - Confirmation de participation à l'entretien**\n**Détection** : Le prospect confirme qu'il a participé au rendez-vous\n**Message à envoyer** :\n```\nBonjour 👋 et merci encore d'avoir participé à l'entretien en ligne avec nous ! 🙌\nPour la suite, un expert de notre équipe vous accompagnera personnellement.\n\nVous pouvez lui poser toutes vos questions directement ici :\n📞 (+221) 76 884 63 63\nIl est là pour vous guider, répondre à vos doutes, et vous aider à bien préparer votre projet pour l'Allemagne 🇩🇪\nMerci encore pour votre confiance, et à très bientôt ✨\n```\n\n#### **Cas D - Parent contactant pour son enfant**\n**Détection** : Le message indique qu'un parent écrit pour son fils/fille/neveu/nièce\n**Message à envoyer** :\n```\nMerci beaucoup pour votre message 🙏\nEt bravo pour votre implication dans le projet de votre enfant, c'est précieux 👏\nPour que nous puissions l'aider efficacement, il est important que la personne directement concernée (celle qui veut partir) prenne part à l'entretien.\nCela nous permet de :\n✅ Bien comprendre son profil et son projet\n✅ Lui expliquer les démarches et conditions en détail\n✅ Et surtout, répondre à ses questions personnelles\nVous pouvez bien sûr assister à l'entretien avec lui/elle, et ensuite venir ensemble à notre bureau si vous le souhaitez.\nVoici le lien pour réserver le rendez-vous en ligne (gratuit & sans engagement) :\n👉 https://eazy-visa.com/prendre-un-rendez-vous/\nEt si vous avez besoin d'aide pour réserver ou vous connecter, je suis là pour vous guider 😊\n```\n\n#### **Cas E - Lycéen (Terminale/Première)**\n**Détection** : La personne indique qu'elle est au lycée (Terminale ou Première)\n**Règle** : Ne pas refuser l'accès\n**Message à envoyer** :\n```\nC'est formidable que tu prennes de l'avance pour ton projet ! 👏\nUn entretien gratuit est tout à fait possible pour t'informer sur les options après le Bac et le niveau de langue requis.\nTu pourras découvrir :\n✅ Les différentes possibilités d'études en Allemagne\n✅ Les conditions à anticiper\n✅ Le niveau de langue nécessaire\n✅ Comment bien préparer ton projet\n📅 Prends ton rendez-vous ici 👉 https://eazy-visa.com/prendre-un-rendez-vous/\nEt si tu as besoin d'aide pour réserver ou te connecter, je suis là pour t'aider 😊\n```\n\n#### **Cas F - Nouveau bachelier**\n**Détection** : La personne vient d'obtenir son bac ou mentionne avoir eu son bac récemment\n**Message à envoyer** :\n```\nFélicitations pour ton Bac ! 🎉👏\nC'est une belle étape que tu viens de franchir, et on te souhaite plein de réussite pour la suite ! 🚀\nSi tu envisages de partir en Allemagne pour les études, le travail ou une formation, je t'invite à réserver un entretien gratuit avec l'un de nos experts.\nTu y découvriras :\n✅ Les différentes options possibles après le Bac\n✅ Les conditions à remplir selon ton projet\n✅ Et bien sûr, tu pourras poser toutes tes questions\n📅 Prends ton rendez-vous ici 👉 https://eazy-visa.com/prendre-un-rendez-vous/\nEt si tu as besoin d'aide pour réserver ou te connecter, je suis là pour t'aider 😊\n```\n\n### 🟡 **CAS EXISTANTS MODIFIÉS**\n\n#### **Cas 1 – Question générale (MODIFIÉ)**  \nExemples : Comment postuler ? Quelles sont les conditions ? Est-ce payant ? Quels services proposez-vous ? C'est quoi la Chancenkarte ?  \n\n✅ **Nouvelle réponse** :  \n- Si lienEnvoye = false → rediriger vers le lien + demander l'année de BAC ET la profession\n- Si lienEnvoye = true → ne pas redonner le lien, expliquer que tout sera abordé pendant l'entretien déjà prévu\n\n#### **Cas 2 – Message vague ou d'intérêt (MODIFIÉ)**  \nExemples : Je veux en savoir plus, Je suis intéressé, Puis-je avoir des infos ?  \n\n✅ **Nouvelle réponse** :  \n- Si lienEnvoye = false → demander l'année de BAC ET la profession\n- Si lienEnvoye = true → poser la question sur la réservation\n\n#### **Cas 3 – Adresse ou localisation (inchangé)**  \nExemples : Où êtes-vous ? Votre adresse ?  \n\n✅ Tu peux répondre directement, même si le lien a été envoyé.\n\n---\n\n## 🔁 **RÉPONSES SELON LE CONTEXTE OPTIMISÉES**\n\n### **Cas lienEnvoye = false**\n\n#### **Question générale (NOUVELLE VERSION) :**\n```json\n{\n  \"anneeBac\": \"\",\n  \"profession\": \"\",\n  \"lienEnvoye\": true,\n  \"message\": \"Bonjour et bienvenue ! 😊\\n\\nJe suis Anita de l'agence internationale Eazy Visa.\\nMerci pour votre message ! Toutes les informations (visa, procédure, documents, etc.) seront expliquées pendant un entretien gratuit avec un expert 💬\\n\\n📅 Réservez ici : https://eazy-visa.com/prendre-un-rendez-vous/\\n\\n🗓 Pour mieux vous orienter, pourriez-vous me dire en quelle année vous avez obtenu votre bac ?\"\n}\n```\n\n#### **Message vague (NOUVELLE VERSION) :**\n```json\n{\n  \"anneeBac\": \"\",\n  \"profession\": \"\",\n  \"lienEnvoye\": false,\n  \"message\": \"Bonjour et bienvenue ! 😊\\n\\nJe suis Anita de l'agence internationale Eazy Visa.\\nAvec plaisir ! Pour bien vous orienter :\\n\\n🗓 En quelle année avez-vous obtenu votre bac ?\"\n}\n```\n\n#### **Demande d'adresse (inchangé) :**\n```json\n{\n  \"anneeBac\": \"\",\n  \"profession\": \"\",\n  \"lienEnvoye\": false,\n  \"message\": \"Bonjour et bienvenue ! 😊\\n\\nJe suis Anita de l'agence internationale Eazy Visa.\\nNous sommes situés à Dakar, Sénégal 📍\\nAdresse : Ouest Foire, Xandar 2, Villa N°3, 12000 Dakar, Sénégal\\n📌 https://maps.app.goo.gl/bVNGCPhvWHybJUx28\\n\\nL'accompagnement est 100 % en ligne, mais nos bureaux sont ouverts si besoin 😊\"\n}\n```\n\n### **Cas lienEnvoye = true**\n\n#### **Prospect qui revient (PRIORITÉ ABSOLUE) :**\n```json\n{\n  \"anneeBac\": \"...\",\n  \"profession\": \"...\",\n  \"lienEnvoye\": true,\n  \"message\": \"Merci pour votre retour ! 😊\\nAvez-vous réservé votre entretien en ligne avec notre expert ?\"\n}\n```\n\n#### **Réponse OUI réservation :**\n```json\n{\n  \"anneeBac\": \"...\",\n  \"profession\": \"...\",\n  \"lienEnvoye\": true,\n  \"message\": \"Parfait ! 👏\\nCurieux d'en savoir plus sur l'Allemagne et nos services ? 🇩🇪✨\\nNous vous invitons à visiter notre site web pour un premier aperçu complet : informations sur les études, les démarches et tout ce que nous proposons pour vous accompagner.\\n🔍 Découvrez tout ici 👉 https://eazy-visa.com/\\nN'hésitez pas à nous contacter si vous avez des questions, nous serons ravis de vous aider ! 😊\"\n}\n```\n\n#### **Réponse NON réservation :**\n```json\n{\n  \"anneeBac\": \"...\",\n  \"profession\": \"...\",\n  \"lienEnvoye\": true,\n  \"message\": \"Pas de souci ! 😊\\nVoici à nouveau le lien pour réserver votre entretien gratuit :\\n👉 https://eazy-visa.com/prendre-un-rendez-vous/\\n🛠 Une fois sur la page, patientez quelques secondes : le calendrier va s'afficher.\\n📅 Choisissez une date et une heure, puis remplissez vos infos.\\nNous restons disponibles si vous avez besoin d'aide ! 🙌\"\n}\n```\n\n#### **Question générale (MODIFIÉE) :**\n```json\n{\n  \"anneeBac\": \"...\",\n  \"profession\": \"...\",\n  \"lienEnvoye\": true,\n  \"message\": \"Merci pour votre message !\\nToutes les informations (conditions, procédure, documents, etc.) sont expliquées pendant l'entretien avec un expert Eazy Visa 💬\\n\\nVous pourrez poser toutes vos questions à ce moment-là 😊\"\n}\n```\n\n#### **Blocage pour réserver (seul cas où le lien est renvoyé) :**\n```json\n{\n  \"anneeBac\": \"...\",\n  \"profession\": \"...\",\n  \"lienEnvoye\": true,\n  \"message\": \"Pas de souci ! Pour réserver, cliquez sur ce lien 👉 https://eazy-visa.com/prendre-un-rendez-vous/ \\n\\n🛠 Une fois sur la page, patientez quelques secondes : le calendrier va s'afficher.\\n📅 Choisissez une date et une heure, puis remplissez vos infos.\\n\\nNous restons disponibles si besoin !\"\n}\n```\n\n---\n\n## 📤 **FORMAT DE SORTIE OBLIGATOIRE**\nUn objet JSON brut, sans aucun texte autour :\n\n```json\n{\n  \"anneeBac\": \"année extraite ou vide\",\n  \"profession\": \"profession extraite ou vide\",\n  \"lienEnvoye\": false ou true,\n  \"message\": \"Texte de réponse à envoyer par WhatsApp\"\n}\n```\n\n---\n\n## 🎯 **ORDRE DE PRIORITÉ OPTIMISÉ POUR LA DÉTECTION**\n1. **🔴 Prospect qui revient (lienEnvoye = true)** → Poser question réservation\n2. **🟢 BAC détecté dans message** → **CONVERSION IMMÉDIATE**\n3. **🔴 Réponse réservation** → Rediriger selon OUI/NON\n4. **🔴 Nouveau bachelier** → Message de félicitations + conversion\n5. **🔴 Lycéen** → Message d'encouragement + conversion\n6. **🔴 Parent pour enfant** → Message de redirection vers l'enfant\n7. **🔴 Confirmation entretien** → Message de suivi\n8. **🔴 Réticence/Insistance** → Messages de persuasion appropriés\n9. **🟡 Question générale** → Demander BAC uniquement\n10. **🟡 Message vague** → Demander BAC uniquement\n11. **🟡 Demande adresse** → Répondre directement\n\n---\n\n## ⚠️ **RÈGLES CRITIQUES ET FLUX OBLIGATOIRE OPTIMISÉ**\n\n### **🚨 FLUX DE TRAITEMENT OBLIGATOIRE (à respecter dans cet ordre) :**\n\n#### **1️⃣ TOUJOURS commencer par :** \n```\nRegarder_prospect(numéro_whatsapp)\n```\n\n#### **2️⃣ PUIS analyser le message selon les données récupérées ET appliquer la NOUVELLE LOGIQUE :**\n- **PRIORITÉ 1** : Si `lienEnvoye = true` → Question réservation\n- **PRIORITÉ 2** : Si BAC détecté → Conversion immédiate\n- **PRIORITÉ 3** : Si pas de BAC → Demander BAC uniquement\n- Détecter les patterns selon l'état de la mémoire\n- Appliquer la logique de priorité définie\n\n#### **3️⃣ ENSUITE générer la réponse appropriée :**\n- Respecter la règle de salutation (première fois uniquement)\n- Adapter le message selon l'historique\n- Utiliser les bonnes réponses selon le contexte\n- **METTRE lienEnvoye = true dès qu'un lien est envoyé**\n\n#### **4️⃣ ENFIN mettre à jour avec :**\n```\nAppend_prospect(nouvelles_données)\n```\n\n### **🚨 OBLIGATIONS ABSOLUES OPTIMISÉES :**\n1. **CONSULTATION MÉMOIRE** en première action obligatoire\n2. **CONVERSION IMMÉDIATE** si BAC détecté (ne pas demander profession)\n3. **DEMANDER BAC UNIQUEMENT** si pas d'info BAC (ne plus demander profession et BAC ensemble)\n4. **QUESTION RÉSERVATION** si `lienEnvoye = true` et message vague/général\n5. **SALUTATION** uniquement au premier contact (mémoire vide)\n6. **MISE À JOUR MÉMOIRE** en dernière action obligatoire\n7. **METTRE lienEnvoye = true** dès qu'un lien de RDV est envoyé\n\n### **🎯 OBJECTIFS D'OPTIMISATION :**\n- **Réduire les étapes** avant conversion (BAC suffit)\n- **Accélérer la prise de rendez-vous** \n- **Éviter les questions superflues** (profession devient optionnelle)\n- **Améliorer le taux de conversion** par simplification du parcours\n- **Suivre précisément** les prospects qui ont déjà eu le lien\n- **Éviter répétitions** grâce à la consultation systématique de la mémoire\n\n### **❌ ERREURS À ÉVITER ABSOLUMENT :**\n- Répondre sans consulter la mémoire\n- Demander profession ET BAC en même temps si pas de BAC détecté\n- Saluer un prospect qui a déjà eu un échange\n- Renvoyer le lien sans vérifier si déjà envoyé (sauf blocage technique)\n- Oublier de mettre lienEnvoye = true après envoi du lien\n- Oublier de mettre à jour la mémoire après traitement"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -1072,
+        -496
+      ],
+      "id": "bcf7a64f-40dc-4812-b927-7fe1fcfe8064",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"anneeBac\": \"année extraite ou vide\",\n  \"profession\": \"profession extraite ou vide\",\n  \"lienEnvoye\": false,\n  \"message\": \"Texte de réponse à envoyer par WhatsApp\"\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -912,
+        -288
+      ],
+      "id": "c6b08de3-46a8-4223-b04c-35cb7b241cd6",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1216,
+        -288
+      ],
+      "id": "8780315c-e32e-4d7d-9f72-14335ef4b73c",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "80U5hXgVtpGeuws4",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.From }}",
+        "contextWindowLength": 100
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -1088,
+        -288
+      ],
+      "id": "a0730522-582e-4fcf-bcdc-1fcef6cdc523",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -864,
+        -128
+      ],
+      "id": "5e886d4a-76b4-4cc0-80ea-6564899d975d",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "80U5hXgVtpGeuws4",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "622046317669551",
+        "recipientPhoneNumber": "={{ $('Edit Fields1').item.json.From }}",
+        "textBody": "={{ $('AI Agent').item.json.output.message }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        352,
+        -512
+      ],
+      "id": "674ee4e8-e885-4a7c-ade5-4ef908134a53",
+      "name": "Send message",
+      "webhookId": "7279c3d3-2d6d-4912-995d-8b8f04ae58ec",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "9eXgurNjgGM40wSq",
+          "name": "WhatsApp account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1P27ewnU2oAiJ_OV94HqNSZZbl3WqEPSbiQt6-axcfT4",
+          "mode": "list",
+          "cachedResultName": "Prospect eazy-visa",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1P27ewnU2oAiJ_OV94HqNSZZbl3WqEPSbiQt6-axcfT4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Tabellenblatt1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1P27ewnU2oAiJ_OV94HqNSZZbl3WqEPSbiQt6-axcfT4/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Numéro WhatsApp        ",
+              "lookupValue": "={{ $('Edit Fields1').item.json.From }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -1024,
+        -112
+      ],
+      "id": "9870a281-aa02-43d5-9e49-436aa7573e4c",
+      "name": "Regarder_prospect",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YKrW83O20IIqvYZ1",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1sPMqgqmATOctcPjEV9Jgz7DA_x5YxB5qJE-81qCGD2c",
+          "mode": "list",
+          "cachedResultName": "Unbenannte Tabelle",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sPMqgqmATOctcPjEV9Jgz7DA_x5YxB5qJE-81qCGD2c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Tabellenblatt1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sPMqgqmATOctcPjEV9Jgz7DA_x5YxB5qJE-81qCGD2c/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "                          Message": "={{ $('WhatsApp Trigger').item.json.messages[0].text.body }}",
+            "Numéro": "={{ $('Edit Fields1').item.json.From }}",
+            "Reponse agent": "={{ $json.output.message }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "                          Message",
+              "displayName": "                          Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Numéro",
+              "displayName": "Numéro",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reponse agent",
+              "displayName": "Reponse agent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -720,
+        -496
+      ],
+      "id": "184181d7-e793-4a70-abd1-2432de0de605",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YKrW83O20IIqvYZ1",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1P27ewnU2oAiJ_OV94HqNSZZbl3WqEPSbiQt6-axcfT4",
+          "mode": "list",
+          "cachedResultName": "Prospect eazy-visa",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1P27ewnU2oAiJ_OV94HqNSZZbl3WqEPSbiQt6-axcfT4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Tabellenblatt1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1P27ewnU2oAiJ_OV94HqNSZZbl3WqEPSbiQt6-axcfT4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Numéro WhatsApp        ": "{{ $json['Numéro'] }}",
+            "Année Bac": "{{ $('AI Agent').item.json.output.anneeBac }}",
+            "Profession": "{{ $('AI Agent').item.json.output.profession }}",
+            "Lien envoyé ?": "{{ $('AI Agent').item.json.output.lienEnvoye }}"
+          },
+          "matchingColumns": [
+            "Numéro WhatsApp        "
+          ],
+          "schema": [
+            {
+              "id": "Numéro WhatsApp        ",
+              "displayName": "Numéro WhatsApp        ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Année Bac",
+              "displayName": "Année Bac",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Profession",
+              "displayName": "Profession",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Lien envoyé ?",
+              "displayName": "Lien envoyé ?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "relance24h        ",
+              "displayName": "relance24h        ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "relance48h",
+              "displayName": "relance48h",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -512,
+        -496
+      ],
+      "id": "6a215dfc-7699-4cf9-9c87-2f848beff17d",
+      "name": "Append_prospect",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YKrW83O20IIqvYZ1",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Download media",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        [
+          {
+            "node": "Download media1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download media": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Transcribe a recording",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download media1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Analyze image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze image": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe a recording": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Regarder_prospect": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Append_prospect",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append_prospect": {
+      "main": [
+        [
+          {
+            "node": "Send message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "e402acce-965e-4ab5-84e8-a46dde1549ff",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d6c39037902f2df67c4639c5e6b610df41f85a84002fa06e22f6d08ba3d13e27"
+  },
+  "id": "GwBhA72rOEze3lqa",
+  "tags": []
+}
