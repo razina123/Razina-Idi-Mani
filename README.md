@@ -1,4 +1,4 @@
-&Bonjour, je suis Razina Idi Mani, passionnée par la Data Science, le Machine Learning et l’automatisation intelligente.
+Bonjour, je suis Razina Idi Mani, passionnée par la Data Science, le Machine Learning et l’automatisation intelligente.
 Je crois que les données et l’IA peuvent transformer la manière dont les institutions et les entreprises prennent leurs décisions et interagissent avec leurs usagers.
 
 📧 razinaidimani3@gmail.com
@@ -62,5 +62,8 @@ Agent conversationnel intelligent : qualification prospects, prise de RDV, relan
 
 
 Automatisation des articles de blog
-Génération et publication automatisée de contenus à partir de sources externes (IA + n8n).
-🔗 Voir le workflow de RDV, relances J+1, mémoire persistante.
+Génération et publication automatisée de contenus à partir de sources externes (IA + make).
+[Télécharger le workflow n8n (Chatbot.json)](https://raw.githubusercontent.com/razina123/Razina-Idi-Mani/main/Blog.blueprint.json)
+
+🖼️ Aperçu du workflow :
+![Workflow make](./blog.png)
