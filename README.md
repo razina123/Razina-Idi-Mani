@@ -57,6 +57,10 @@ Chatbot WhatsApp (n8n) — Eazy Visa
 Agent conversationnel intelligent : qualification prospects, prise de RDV, relances J+1, mémoire persistante.
 [Télécharger le workflow n8n (Chatbot.json)](https://raw.githubusercontent.com/razina123/Razina-Idi-Mani/main/Chatbot.json)
 
+🖼️ Aperçu du workflow :
+![Workflow n8n](./workflow.png)
+
+
 Automatisation des articles de blog
 Génération et publication automatisée de contenus à partir de sources externes (IA + n8n).
 🔗 Voir le workflow de RDV, relances J+1, mémoire persistante.
