@@ -27,7 +27,8 @@ Exploration et KPIs (CTR, ROAS, CPA) pour évaluer et optimiser les performances
 
 Dashboard Power BI — Comptabilité Eazy Visa
 Suivi financier (revenus, dépenses, marges) via un tableau de bord interactif.
-🔗 Voir le projet
+🖼️ Aperçu :  
+  ![Dashboard Power BI](./Dashboard.png)
 
 🔹 2. Machine Learning appliqué
 
